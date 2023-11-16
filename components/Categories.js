@@ -1,11 +1,24 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useState, useEffect,  } from 'react';
 import { ScrollView } from 'react-native-gesture-handler'
 import CategoryCard from './CategoryCard'
+import axios from 'axios'; 
 
 
-const localImage = require('../assets/food1.jpg');
+
 const Categories = () => {
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    // Fetch restaurants data from the backend when the component mounts
+    axios.get('http://10.0.2.2:3000/api/categories')
+      .then((response) => {
+        setCategories(response.data); // Update state with fetched restaurant data
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+  }, []);
   return (
     <ScrollView
         contentContainerStyle={{
@@ -15,14 +28,14 @@ const Categories = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
     >
+      {categories.map((category) => (
+        <CategoryCard
+            key={category.id}
+            imgurl={category.imgurl}
+            title={category.title}
+        />
+      ))}
       
-        <CategoryCard imgurl={localImage} title="testing1"/>
-        <CategoryCard imgurl={localImage} title="testing2"/>
-        <CategoryCard imgurl={localImage} title="testing3"/>
-        <CategoryCard imgurl={localImage} title="testing3"/>
-        <CategoryCard imgurl={localImage} title="testing3"/>
-        <CategoryCard imgurl={localImage} title="testing3"/>
-        <CategoryCard imgurl={localImage} title="testing3"/>
     </ScrollView>
    
   )

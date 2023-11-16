@@ -8,7 +8,9 @@ const CategoryCard = ({ imgurl, title }) => {
     <View>
         <TouchableOpacity style={styles.container}>
             <Image
-              source={imgurl}
+               source={{
+                uri: imgurl,
+              }}
               style={styles.img}
             />
             <Text style={styles.titleStyle}>{title}</Text>
@@ -27,13 +29,13 @@ const styles = StyleSheet.create({
     },
 
     img: {
-        width: 100,
-        height: 100,
+        width: 200,
+        height: 200,
     },
 
     titleStyle: {
        textAlign:'center',
-        color: 'white',
+        fontSize:20,
         color:'black',
     }
 })

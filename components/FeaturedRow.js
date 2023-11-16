@@ -1,36 +1,55 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useState, useEffect,  } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { ScrollView } from 'react-native-gesture-handler';
 import RestaurantCard from './RestaurantCard';
+import axios from 'axios'; 
+
+
 
 const FeaturedRow = ({ title, description, featuredCategory }) => {
+    const [restaurants, setRestaurants] = useState([]);
+
+    useEffect(() => {
+        // Fetch restaurants data from the backend when the component mounts
+        axios.get('http://10.0.2.2:3000/api/restaurants')
+          .then((response) => {
+            setRestaurants(response.data); // Update state with fetched restaurant data
+          })
+          .catch((error) => {
+            console.error('Error fetching data:', error);
+          });
+      }, []);
+
   return (
     <View>
         <View style={styles.container}>
             <Text style={styles.titleStyle}>{title}</Text>
             <Icon name="arrow-right" size={25} style={styles.arrowIcon}/>
         </View>
-        <Text>{description}</Text>
-        <ScrollView horizontal
-             contentContainerStyle={{
-                paddingHorizontal: 15,
-            }}
-            showsHorizontalScrollIndicator={false}
-        >
-        <RestaurantCard
-             id={123}
-             imgurl='https://links.papareact.com/wru'
-             title='Jebebe foods'
-             rating={4.5}
-             address='chilobwe center'
-             short_description='test description'
-             dishes={[]}
-             long={9}
-             lat={7}
-        
-        />
-        </ScrollView>
+        <Text style={styles.descStyle}>{description}</Text>
+        <ScrollView
+        horizontal
+        contentContainerStyle={{
+          paddingHorizontal: 15,
+        }}
+        showsHorizontalScrollIndicator={false}
+      >
+        {restaurants.map((restaurant) => (
+          <RestaurantCard
+            key={restaurant.id} // Make sure to provide a unique key for each item in the list
+            id={restaurant.id}
+            imgurl={restaurant.imgurl}
+            title={restaurant.title}
+            rating={restaurant.rating}
+            address={restaurant.address}
+            short_description={restaurant.short_description}
+            dishes={restaurant.dishes}
+            long={restaurant.long}
+            lat={restaurant.lat}
+          />
+        ))}
+      </ScrollView>
     </View>
     
   )
@@ -42,7 +61,8 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingTop: 20
+        paddingTop: 20,
+        paddingLeft: 15
     },
     titleStyle: {
         fontSize: 20,
@@ -50,5 +70,8 @@ const styles = StyleSheet.create({
     },
     arrowIcon: {
         color: 'skyblue'
+    },
+    descStyle: {
+        paddingLeft: 15
     }
 })
