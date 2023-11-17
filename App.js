@@ -5,18 +5,21 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './screens/HomeScreen';
 import TestScreen from './screens/TestScreen';
 import RestaurantScreen from './screens/RestaurantScreen';
+import { Provider } from 'react-redux';
+
 
 const Stack = createStackNavigator()
 
 export default function App() {
   return (
     <NavigationContainer>
+ 
       <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="restaurant" component={RestaurantScreen} />
-       
-       
+        <Stack.Screen name="restaurant" component={RestaurantScreen} /> 
     </Stack.Navigator>
+
+     
     </NavigationContainer>
    
   );

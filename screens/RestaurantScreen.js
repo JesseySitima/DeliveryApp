@@ -2,6 +2,7 @@ import { ScrollView, StyleSheet, Text, View, Image, Dimensions } from 'react-nat
 import React from 'react'
 import { useRoute } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import DishRow from '../components/DishRow';
 
 const RestaurantScreen = () => {
     const {
@@ -44,6 +45,18 @@ const RestaurantScreen = () => {
           </View>
           <View style={styles.menuTextContainer}>
             <Text style={styles.menuText}>Menu</Text>
+          </View>
+          <View>
+            {dishes.map((dish, index) => (
+              <DishRow
+                  key={dish._id}
+                  id={dish._id}
+                  name={dish.name}
+                  description={dish.description}
+                  price={dish.price}
+                  image={dish.imgurl}
+              />
+            ))}
           </View>
           
         </ScrollView>
