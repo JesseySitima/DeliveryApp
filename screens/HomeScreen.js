@@ -44,21 +44,16 @@ const HomeScreen = () => {
       <ScrollView style={styles.bodyContainer}>
         <Categories/>
 
+       
         <FeaturedRow
-            id='123'
-            title='Featured'
-            description='first description'
-            featuredCategory='featured'
-        />
-        <FeaturedRow
-            id='1234'
-            title='Tasty Discounts'
-            description='second description'
+             id='12367'
+            title='Offers Near You'
+            description='third description'
             featuredCategory='featured'
         />
         <FeaturedRow
              id='12367'
-            title='Offers Near You'
+            title='Featured'
             description='third description'
             featuredCategory='featured'
         />

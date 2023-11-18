@@ -1,10 +1,16 @@
 import { ScrollView, StyleSheet, Text, View, Image, Dimensions } from 'react-native'
-import React from 'react'
-import { useRoute } from '@react-navigation/native'
+import React, { useEffect } from 'react'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DishRow from '../components/DishRow';
+import BasketPopUp from '../components/BasketPopUp';
+import { useDispatch } from 'react-redux';
+import { setRestaurant } from '../features/restaurantSlice';
 
 const RestaurantScreen = () => {
+    const navigation = useNavigation();
+    const dispatch = useDispatch();
+
     const {
         params: {
             id,
@@ -18,7 +24,24 @@ const RestaurantScreen = () => {
             lat,
         },
     } = useRoute();
+
+    useEffect(() => {
+      dispatch(setRestaurant({
+        id,
+        imgurl,
+        title,
+        rating,
+        address,
+        short_description,
+        dishes,
+        long,
+        lat,
+      }))
+    }, [dispatch])
+
     return (
+      <>
+      <BasketPopUp/>
         <ScrollView>
           <View style={styles.container}>
             <Image
@@ -46,11 +69,11 @@ const RestaurantScreen = () => {
           <View style={styles.menuTextContainer}>
             <Text style={styles.menuText}>Menu</Text>
           </View>
-          <View>
+          <View style={styles.dishContainer}>
             {dishes.map((dish, index) => (
               <DishRow
-                  key={dish._id}
-                  id={dish._id}
+                  key={dish.id}
+                  id={index}
                   name={dish.name}
                   description={dish.description}
                   price={dish.price}
@@ -60,6 +83,7 @@ const RestaurantScreen = () => {
           </View>
           
         </ScrollView>
+        </>
       );
     };
     
@@ -109,5 +133,8 @@ const RestaurantScreen = () => {
     menuText: {
         fontSize: 18,
         fontWeight: '400'
+    },
+    dishContainer: {
+      paddingBottom: 50
     }
     });

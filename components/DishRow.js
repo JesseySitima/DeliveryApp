@@ -3,9 +3,23 @@ import React, { useState } from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Currency from 'react-currency-formatter';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToBasket, selectBasketItemsWithId, removeFromBasket } from '../features/basketSlice';
 
-const DishRow = ({ id,name, description, price, image }) => {
-    const [isPressed, setIsPressed] = useState(false)
+const DishRow = ({key, id,name, description, price, image }) => {
+    const [isPressed, setIsPressed] = useState(false);
+    const dispatch = useDispatch();
+    const items = useSelector((state) => selectBasketItemsWithId(state, id));
+
+    const addItemToBasket = () => {
+        dispatch(addToBasket({id,name, description, price, image}));
+    };
+
+    const removeItemFromBasket = () => {
+        if (items.length <= 0) return;  
+
+        dispatch(removeFromBasket({ id }))
+    }
 
     return (
         <>
@@ -38,11 +52,11 @@ const DishRow = ({ id,name, description, price, image }) => {
         {isPressed && (
             <View style={styles.buttonContainer}>
                 <TouchableOpacity>
-                    <Icon name="minus-circle" size={30} color="#66cc99" style={styles.starIcon}/>
+                    <Icon name="minus-circle" size={30} color="#66cc99" style={styles.starIcon} onPress={removeItemFromBasket}/>
                 </TouchableOpacity>
-                <Text style={styles.textStyle}>0</Text>
+                <Text style={styles.textStyle}>{items.length}</Text>
                 <TouchableOpacity>
-                    <Icon name="plus-circle" size={30} color="#66cc99" style={styles.starIcon}/>
+                    <Icon name="plus-circle" size={30} color="#66cc99" style={styles.starIcon} onPress={addItemToBasket}/>
                 </TouchableOpacity>
             </View>
             
