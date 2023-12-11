@@ -60,11 +60,16 @@ export default RestaurantCard
 
 const styles = StyleSheet.create({
     restaurantContainer:{
-        backgroundColor: "white",
-        borderRadius: 8,
+        borderRadius: 10,
         padding: 16,
-        marginRight: 10
-      
+        marginBottom: 20,
+        alignItems: 'center',
+        borderWidth: 1, // Add border width
+        borderColor: 'lightgray', // Specify border color
+        paddingHorizontal: 10, // Add horizontal padding for the container
+        marginTop: 10, // Add margin to separate from the logo and text
+        marginLeft:10,
+        marginRight: 10,
     },
 
     imageStyle: {

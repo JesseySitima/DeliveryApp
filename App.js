@@ -2,12 +2,13 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from './screens/HomeScreen';
-import TestScreen from './screens/TestScreen';
-import RestaurantScreen from './screens/RestaurantScreen';
 import { Provider } from 'react-redux';
 import { store } from './store';
-import BasketScreen from './screens/BasketScreen';
+import LandingPage from './screens/LandingPage';
+import PrepareOrderScreen from './screens/PrepareOrderScreen';
+import MenuScreen from './screens/MenuScreen';
+import DishScreen from './screens/DishScreen';
+import CartScreen from './screens/CartScreen';
 
 
 
@@ -18,9 +19,11 @@ export default function App() {
     <NavigationContainer>
       <Provider store={store}>
           <Stack.Navigator>
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="restaurant" component={RestaurantScreen} /> 
-            <Stack.Screen name="basket" component={BasketScreen} options={{ presentation: 'modal'}} /> 
+            <Stack.Screen name="Welcome" component={LandingPage} options={{headerShown: false}} />
+            <Stack.Screen name="Menu" component={MenuScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="Dishes" component={DishScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="cart" component={CartScreen} options={{ presentation: 'modal'}} /> 
+            <Stack.Screen name="preparOrder" component={PrepareOrderScreen} /> 
           </Stack.Navigator>
     </Provider>
      

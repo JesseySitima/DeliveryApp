@@ -1,45 +1,35 @@
+// basketSlice.js
+
 import { createSlice } from '@reduxjs/toolkit';
-import { createSelector } from 'reselect';
 
 const initialState = {
-  items: [],
+  selectedDishes: {}, // This will store the selected dishes and their quantities
 };
 
 export const basketSlice = createSlice({
   name: 'basket',
   initialState,
   reducers: {
-    addToBasket: (state, action) => {
-      state.items = [...state.items, action.payload];
+    addDish: (state, action) => {
+      const { dishId, quantity } = action.payload;
+      state.selectedDishes[dishId] = (state.selectedDishes[dishId] || 0) + quantity;
+      console.log('Added dish', dishId, 'Quantity:', state.selectedDishes[dishId]);
     },
-    removeFromBasket: (state, action) => {
-      const index = state.items.findIndex(
-        (item) => item.id === action.payload.id
-      );
-
-      let newBasket = [...state.items];
-
-      if(index >= 0) {
-        newBasket.splice(index, 1);
-      }else {
-        console.warn('cant remove item');
+    removeDish: (state, action) => {
+      const { dishId, quantity } = action.payload;
+      if (state.selectedDishes[dishId] > 0) {
+        state.selectedDishes[dishId] -= quantity;
+        console.log('Removed dish', dishId, 'Quantity:', state.selectedDishes[dishId]);
       }
-
-      state.items = newBasket;
+      // Handle removing a dish completely if needed
+      // Example: delete state.selectedDishes[dishId] to remove completely
     },
+    // Define other actions if needed
   },
 });
 
-export const { addToBasket, removeFromBasket } = basketSlice.actions;
+export const { addDish, removeDish } = basketSlice.actions;
 
-// Selector function for getting basket items by ID
-export const selectBasketItems = (state) => state.basket.items;
-
-export const selectBasketItemsWithId = createSelector(
-  [selectBasketItems, (_, id) => id],
-  (items, id) => items.filter((item) => item.id === id)
-);
-
-export const selectBasketTotal = (state) => state.basket.items.reduce((total, item) =>total += item.price, 0)
+export const selectSelectedDishes = (state) => state.basket.selectedDishes;
 
 export default basketSlice.reducer;
