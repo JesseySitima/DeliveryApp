@@ -1,5 +1,3 @@
-// basketSlice.js
-
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
@@ -11,18 +9,35 @@ export const basketSlice = createSlice({
   initialState,
   reducers: {
     addDish: (state, action) => {
-      const { dishId, quantity } = action.payload;
-      state.selectedDishes[dishId] = (state.selectedDishes[dishId] || 0) + quantity;
-      console.log('Added dish', dishId, 'Quantity:', state.selectedDishes[dishId]);
+      const { dishId, quantity, name, price, imageUrl } = action.payload;
+      if (!state.selectedDishes[dishId]) {
+        state.selectedDishes[dishId] = {
+          quantity,
+          name,
+          price,
+          imageUrl,
+        };
+      } else {
+        state.selectedDishes[dishId] = {
+          ...state.selectedDishes[dishId],
+          quantity: state.selectedDishes[dishId].quantity + quantity,
+        };
+      }
+      console.log('Added dish', dishId, 'Quantity:', state.selectedDishes[dishId].quantity);
     },
     removeDish: (state, action) => {
       const { dishId, quantity } = action.payload;
-      if (state.selectedDishes[dishId] > 0) {
-        state.selectedDishes[dishId] -= quantity;
-        console.log('Removed dish', dishId, 'Quantity:', state.selectedDishes[dishId]);
+      if (state.selectedDishes[dishId]) {
+        if (state.selectedDishes[dishId].quantity > quantity) {
+          state.selectedDishes[dishId] = {
+            ...state.selectedDishes[dishId],
+            quantity: state.selectedDishes[dishId].quantity - quantity,
+          };
+        } else {
+          delete state.selectedDishes[dishId];
+        }
+        console.log('Removed dish', dishId);
       }
-      // Handle removing a dish completely if needed
-      // Example: delete state.selectedDishes[dishId] to remove completely
     },
     // Define other actions if needed
   },

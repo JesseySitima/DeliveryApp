@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, Modal,  } from 'react-native';
 import { addDish, removeDish, selectSelectedDishes } from '../features/basketSlice';
-import Notification from '../components/Notification';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const DishScreen = ({ route }) => {
   // Retrieve dishes from route parameters
@@ -11,8 +11,9 @@ const DishScreen = ({ route }) => {
 
   const dispatch = useDispatch();
   const basket = useSelector((state) => state.basket);
-  const [showNotification, setShowNotification] = useState(false);
+  
   const navigation = useNavigation();
+  const [totalCartItems, setTotalCartItems] = useState(0);
 
   const handleAddToCart = (dishId) => {
     const selectedDish = dishes.find(dish => dish.id === dishId); // Find the dish by its ID
@@ -25,7 +26,7 @@ const DishScreen = ({ route }) => {
         price: selectedDish.price,
         imageUrl: selectedDish.image
       }));
-      setShowNotification(true);
+    
       console.log(`Added ${selectedDish.name} to the basket`);
     } else {
       console.log(`Dish with ID ${dishId} not found.`);
@@ -50,46 +51,89 @@ const DishScreen = ({ route }) => {
       }
     }
   };
+
+   // Function to calculate the total quantity of items in the basket
+   const getTotalItemsInBasket = () => {
+    let totalItems = 0;
+  
+    Object.values(basket.selectedDishes).forEach((dish) => {
+      totalItems += dish.quantity;
+    });
+  
+    return totalItems;
+  };
+  
+  useEffect(() => {
+    const itemsCount = getTotalItemsInBasket();
+    console.log('Total Items Count:', itemsCount); // Log the itemsCount for debugging
+    setTotalCartItems(itemsCount);
+  }, [basket]);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setSelectedImage(null);
+    setModalVisible(false);
+  };
+
   
 
   const renderDishItem = ({ item }) => {
     const dishId = item.id;
-
+    const selectedDish = basket.selectedDishes[dishId]; // Fetch selected dish from the store
+  
     return (
       <View style={styles.dishContainer}>
-        <Image source={item.image} style={styles.dishImage} />
+         <TouchableOpacity onPress={() => openModal(item.image)}>
+            <Image source={item.image} style={styles.dishImage} />
+        </TouchableOpacity>
         <View style={styles.textContainer}>
           <Text style={styles.dishTitle}>{item.name}</Text>
           <Text style={styles.dishDescription}>{item.description}</Text>
           <Text style={styles.dishPrice}>Price: ${item.price}</Text>
         </View>
-          {/* Your existing text components */}
-          <View style={styles.quantityContainer}>
-            <TouchableOpacity onPress={() => handleRemoveFromCart(dishId)}>
-              <Text style={styles.quantityButton}>-</Text>
-            </TouchableOpacity>
-            <Text style={styles.quantity}>{basket.selectedDishes[dishId] || 0}</Text>
-            <TouchableOpacity onPress={() => handleAddToCart(dishId)}>
-              <Text style={styles.quantityButton}>+</Text>
-            </TouchableOpacity>
-          </View>
-        
+        <View style={styles.quantityContainer}>
+          <TouchableOpacity onPress={() => handleRemoveFromCart(dishId)}>
+            <Text style={styles.quantityButton}>-</Text>
+          </TouchableOpacity>
+          <Text style={styles.quantity}>{selectedDish ? selectedDish.quantity : 0}</Text>
+          <TouchableOpacity onPress={() => handleAddToCart(dishId)}>
+            <Text style={styles.quantityButton}>+</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
-
+  
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        {/* Add Cart Icon */}
+        <TouchableOpacity
+          style={styles.cartIcon}
+          onPress={() => navigation.navigate('cart')}
+        >
+          <Icon name="shopping-cart" size={24} color="black" />
+          {totalCartItems > 0 && (
+            <View style={styles.cartBadge}>
+              <Text style={styles.cartBadgeText}>{totalCartItems}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+        {/* Your existing image */}
+       
+      </View>
        <Image
             source={require('../assets/menu.jpg')}
             style={styles.image}
           />
-          {showNotification && (
-        <Notification onPress={() => navigation.navigate('cart')}>
-          
-        </Notification>
-      )}
       <Text style={styles.screenTitle}>Dishes</Text>
       <FlatList
         data={dishes}
@@ -97,6 +141,25 @@ const DishScreen = ({ route }) => {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.dishList}
       />
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={modalVisible}
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalContainer}>
+          <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+          {selectedImage && (
+            <Image
+              source={selectedImage}
+              style={styles.enlargedImage}
+              resizeMode="contain"
+            />
+          )}
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -170,6 +233,55 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 5
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginLeft: 'auto',
+    marginTop: 20
+  },
+  cartIcon: {
+    padding: 10,
+    position: 'relative',
+  },
+  cartBadge: {
+    position: 'absolute',
+    backgroundColor: 'tomato',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    top: -8, // Adjust this value for vertical positioning
+    right: -8, // Adjust this value for horizontal positioning
+  },
+  cartBadgeText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+  },
+  enlargedImage: {
+    width: '100%',
+    height: '100%',
+    alignSelf: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    zIndex: 1,
+  },
+  closeButtonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+
 });
 
 export default DishScreen;
