@@ -4,10 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, Modal,  } from 'react-native';
 import { addDish, removeDish, selectSelectedDishes } from '../features/basketSlice';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { FontAwesome } from '@expo/vector-icons';
 
 const DishScreen = ({ route }) => {
   // Retrieve dishes from route parameters
-  const { dishes } = route.params;
+  const { dishes, title } = route.params;
 
   const dispatch = useDispatch();
   const basket = useSelector((state) => state.basket);
@@ -34,23 +35,22 @@ const DishScreen = ({ route }) => {
   };
   
   const handleRemoveFromCart = (dishId) => {
-    if (basket.selectedDishes[dishId] > 0) {
-      const selectedDish = dishes.find(dish => dish.id === dishId); // Find the dish by its ID
+    const selectedDish = basket.selectedDishes[dishId];
   
-      if (selectedDish) {
-        dispatch(removeDish({
-          dishId,
-          quantity: 1,
-          name: selectedDish.name,
-          price: selectedDish.price,
-          imageUrl: selectedDish.image
-        }));
-        console.log(`Removed ${selectedDish.name} from the basket`);
-      } else {
-        console.log(`Dish with ID ${dishId} not found.`);
-      }
+    if (selectedDish && selectedDish.quantity > 0) {
+      dispatch(removeDish({
+        dishId,
+        quantity: 1,
+        name: selectedDish.name,
+        price: selectedDish.price,
+        imageUrl: selectedDish.imageUrl
+      }));
+      console.log(`Removed ${selectedDish.name} from the basket`);
+    } else {
+      console.log(`Dish with ID ${dishId} not found in the basket or quantity is 0.`);
     }
   };
+  
 
    // Function to calculate the total quantity of items in the basket
    const getTotalItemsInBasket = () => {
@@ -115,7 +115,9 @@ const DishScreen = ({ route }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        {/* Add Cart Icon */}
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconContainer}>
+          <FontAwesome name="arrow-left" size={24} color="black" />
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.cartIcon}
           onPress={() => navigation.navigate('cart')}
@@ -127,14 +129,13 @@ const DishScreen = ({ route }) => {
             </View>
           )}
         </TouchableOpacity>
-        {/* Your existing image */}
        
       </View>
        <Image
             source={require('../assets/menu.jpg')}
             style={styles.image}
           />
-      <Text style={styles.screenTitle}>Dishes</Text>
+      <Text style={styles.screenTitle}>{title}</Text>
       <FlatList
         data={dishes}
         renderItem={renderDishItem}
@@ -236,9 +237,13 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 25,
+    paddingBottom: 5,
     alignItems: 'center',
-    marginLeft: 'auto',
-    marginTop: 20
+  },
+  iconContainer: {
+    padding: 5,
   },
   cartIcon: {
     padding: 10,

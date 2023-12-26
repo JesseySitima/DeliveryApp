@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity,  } from 'react-native';
 
 const LandingPage = ({ navigation }) => {
   // Function to navigate to the main app screen
@@ -9,6 +9,7 @@ const LandingPage = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+     
       <Image
         source={require('../assets/maxlogo.jpg')} // Replace with your app's logo
         style={styles.logo}
@@ -31,6 +32,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#ffffff',
     padding: 20,
+    position: 'relative',
+  },
+  frameContainer: {
+    position: 'absolute',
+    top: -10, // Adjust the position based on your preference
+    zIndex: 1,
+  },
+  frame: {
+    width: 200,
+    height: 200,
   },
   logo: {
     width: 300,

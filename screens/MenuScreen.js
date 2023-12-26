@@ -1,6 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Image, FlatList, Dimensions, TextInput, TouchableOpacity } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
+
 
 const MenuScreen = () => {
   // Sample menu items
@@ -8,28 +11,35 @@ const MenuScreen = () => {
     {
       id: '1',
       title: 'Starters',
-      image: require('../assets/nsima-chicken.jpg'),
+      image: require('../assets/soup.jpg'),
       dishes: [
         {
           id: 'dish1',
           name: 'Mushroom soup',
-          description: 'Description for Starter 1',
+          description: 'Made from natural stock, light chicken, mushroom...',
           image: require('../assets/soup.jpg'),
-          price: 9.99
+          price: 10500.00
         },
         {
           id: 'dish2',
           name: 'Greek Salad',
-          description: 'Description for Starter 2',
+          description: 'Combination of crispy letuce, feta cheese, olives...',
           image:require('../assets/greek-salad.png'),
-          price: 12.99
+          price: 9500.00
         },
         {
           id: 'dish3',
           name: 'Beef Salad',
-          description: 'Description for Starter 2',
+          description: 'Well done cooked beef combined with aromantic herbs and crisp salad...',
           image:require('../assets/beef-salad.png'),
-          price: 12.99
+          price: 9500.00
+        },
+        {
+          id: 'dish4',
+          name: 'Onion Rings',
+          description: 'Slice of onions, coated with butter, bread crumbs, flour ...',
+          image:require('../assets/onionRings.jpg'),
+          price: 9500.00
         },
         // Add more dish items for Starters
       ]
@@ -41,47 +51,82 @@ const MenuScreen = () => {
       dishes: [
         {
           id: 'dish21',
-          name: 'Main Course 1',
-          description: 'Description for Main Course 1',
-          image: 'one,',
-          price: 15.99
+          name: 'Sherry\'s Pork Ribs',
+          description: 'Sweet grazed pork ribs of 300-400 grams in garlic, pepper and ...',
+          image:require('../assets/porkRib.jpg'),
+          price: 19500.00
         },
         {
           id: 'dish22',
-          name: 'Main Course 2',
-          description: 'Description for Main Course 2',
-          image: 'one,',
-          price: 18.99
+          name: 'Batala',
+          description: 'Served with kondowole nsima and local vegetables...',
+          image:require('../assets/batala.jpg'),
+          price: 19500.00
+        },
+        {
+          id: 'dish23',
+          name: 'Chambo',
+          description: 'Served with nsima or rice and local vegetables...',
+          image:require('../assets/batala.jpg'),
+          price: 19500.00
+        },
+        {
+          id: 'dish24',
+          name: 'Mixed grill',
+          description: 'A combination of white and red meat including sausages, chicken fillet, ...',
+          image:require('../assets/mix.jpg'),
+          price: 39500.00
+        },
+        {
+          id: 'dish25',
+          name: 'T-Bone Steak',
+          description: 'A specially 300-350grams cut of a Malawi aged prime beef served with, ...',
+          image:require('../assets/batala.jpg'),
+          price: 18500.00
         },
         // Add more dish items for Mains
       ]
     },
     {
       id: '3',
-      title: "Max's Lake Malawi Delicacies",
-      image: require('../assets/prawns.jpg'),
+      title: "Desserts",
+      image: require('../assets/cake22.png'),
       dishes: [
         {
           id: 'dish31',
-          name: 'Delicacy 1',
-          description: 'Description for Delicacy 1',
-          image: 'one,',
-          price: 20.99
+          name: 'Chocolate Cake',
+          description: 'Saved with whipped cram from...',
+          image:require('../assets/cake22.png'),
+          price: 8000.00
         },
         {
           id: 'dish32',
-          name: 'Delicacy 2',
-          description: 'Description for Delicacy 2',
-          image: 'one,',
-          price: 22.99
+          name: 'Sherry\'s Ice-Cream',
+          description: 'A blend of different tasty flavours...',
+          image:require('../assets/icecream.jpg'),
+          price: 6000.00
+        },
+        {
+          id: 'dish33',
+          name: 'Milk-Shakes',
+          description: 'A blend of different tasty flavours...',
+          image:require('../assets/milkshake.jpg'),
+          price: 9500.00
+        },
+        {
+          id: 'dish34',
+          name: 'Fruit Salad',
+          description: 'A blend of different tasty flavours...',
+          image:require('../assets/fruitsalad.jpg'),
+          price: 9000.00
         },
         // Add more dish items for Max's Lake Malawi Delicacies
       ]
     },
     {
-      id: '8',
-      title: 'Pasta Perfecto',
-      image: require('../assets/rice-zinziri.jpg'),
+      id: '4',
+      title: 'Specials',
+      image: require('../assets/mbalanga.jpg'),
       dishes: [
         {
           id: 'dish81',
@@ -101,94 +146,64 @@ const MenuScreen = () => {
       ]
     },
     {
-      id: '4',
-      title: 'Sea Foods',
-      image: 'one,',
-      dishes: [
-        {
-          id: 'dish41',
-          name: 'Seafood 1',
-          description: 'Description for Seafood 1',
-          image: 'one,',
-          price: 25.99
-        },
-        {
-          id: 'dish42',
-          name: 'Seafood 2',
-          description: 'Description for Seafood 2',
-          image: 'one,',
-          price: 28.99
-        },
-        // Add more dish items for Sea Foods
-      ]
-    },
-    {
       id: '5',
-      title: 'Kids Table',
-      image: require('../assets/soup.jpg'),
+      title: 'Beverages',
+      image: require('../assets/drinks.jpg'),
       dishes: [
         {
-          id: 'dish1',
-          name: 'Kids Meal 1',
-          description: 'Description for Kids Meal 1',
-          image: 'one,',
-          price: 10.99
+          id: 'dish81',
+          name: 'Bottled Water',
+          description: 'Pure water 300ml',
+          image:require('../assets/water.png'),
+          price: 1500.00
         },
         {
-          id: 'dish2',
-          name: 'Kids Meal 2',
-          description: 'Description for Kids Meal 2',
-          image: 'one,',
-          price: 12.99
+          id: 'dish82',
+          name: 'Minerals',
+          description: 'all flavours of soft drinks',
+          image:require('../assets/drinks.jpg'),
+          price: 1500.00
         },
-        // Add more dish items for Kids Table
+        {
+          id: 'dish83',
+          name: 'Juices',
+          description: 'A glass of sugar free juice of any flavour',
+          image:require('../assets/juices.png'),
+          price: 6000.00
+        },
+        {
+          id: 'dish84',
+          name: 'Wine',
+          description: 'A glass of any desired wine',
+          image:require('../assets/wine.jpg'),
+          price: 8000.00
+        },
+        // Add more dish items for Pasta Perfecto
       ]
     },
     {
       id: '6',
-      title: 'Vegetarians',
-      image: require('../assets/sausage.jpg'),
+      title: 'Vegeterian Specials',
+      image: require('../assets/rice-zinziri.jpg'),
       dishes: [
         {
-          id: 'dish1',
-          name: 'Vegetarian Dish 1',
-          description: 'Description for Vegetarian Dish 1',
-          image: 'one,',
-          price: 14.99
-        },
-        {
-          id: 'dish2',
-          name: 'Vegetarian Dish 2',
-          description: 'Description for Vegetarian Dish 2',
-          image: 'one,',
+          id: 'dish81',
+          name: 'Pasta Dish 1',
+          description: 'Description for Pasta Dish 1',
+          image:'one,',
           price: 16.99
         },
-        // Add more dish items for Vegetarians
+        {
+          id: 'dish82',
+          name: 'Pasta Dish 2',
+          description: 'Description for Pasta Dish 2',
+          image: 'one,',
+          price: 19.99
+        },
+        // Add more dish items for Pasta Perfecto
       ]
     },
-    {
-      id: '7',
-      title: 'Best Desserts',
-      image: require('../assets/staters.jpg'),
-      dishes: [
-        {
-          id: 'dish1',
-          name: 'Dessert 1',
-          description: 'Description for Dessert 1',
-          image: 'one,',
-          price: 8.99
-        },
-        {
-          id: 'dish2',
-          name: 'Dessert 2',
-          description: 'Description for Dessert 2',
-          image: 'one,',
-          price: 10.99
-        },
-        // Add more dish items for Best Desserts
-      ]
-    },
-    // Add more menu items as needed
+    
   ];
   
 
@@ -209,11 +224,52 @@ const MenuScreen = () => {
     setFilteredMenuItems(filteredItems);
   };
 
+  const basket = useSelector((state) => state.basket);
+  const [totalCartItems, setTotalCartItems] = useState(0);
+
+   // Function to calculate the total quantity of items in the basket
+   const getTotalItemsInBasket = () => {
+    let totalItems = 0;
+
+    Object.values(basket.selectedDishes).forEach((dish) => {
+      totalItems += dish.quantity;
+    });
+
+    return totalItems;
+  };
+
+  useEffect(() => {
+    const itemsCount = getTotalItemsInBasket();
+    console.log('Total Items Count:', itemsCount); // Log the itemsCount for debugging
+    setTotalCartItems(itemsCount);
+  }, [basket]);
+
+  const renderHeader = () => {
+    return (
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconContainer}>
+          <FontAwesome name="arrow-left" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconContainer}>
+          <FontAwesome name="user" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('cart')}>
+          <FontAwesome name="shopping-cart" size={24} color="black" />
+          {totalCartItems > 0 && (
+            <View style={styles.cartBadge}>
+              <Text style={styles.cartBadgeText}>{totalCartItems}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   const renderMenuItem = ({ item }) => {
     const handleItemClick = () => {
         // Perform actions when an item is clicked
         console.log(`Clicked on ${item.title}`);
-        navigation.navigate("Dishes", { dishes: item.dishes })
+        navigation.navigate("Dishes", { title: item.title, dishes: item.dishes })
       }; 
     return (
       <TouchableOpacity onPress={handleItemClick}>
@@ -230,6 +286,7 @@ const MenuScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      {renderHeader()}
       <View style={styles.container}>
       <View style={styles.firstView}>
           <Image
@@ -326,6 +383,37 @@ const styles = StyleSheet.create({
   menuTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 30,
+    paddingBottom: 5,
+    alignItems: 'center',
+  },
+  iconContainer: {
+    padding: 5,
+  },
+  cartIcon: {
+    padding: 10,
+    position: 'relative',
+  },
+  cartBadge: {
+    position: 'absolute',
+    backgroundColor: 'tomato',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    top: -8, // Adjust this value for vertical positioning
+    right: -8, // Adjust this value for horizontal positioning
+  },
+  cartBadgeText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 12,
   },
 });
 
